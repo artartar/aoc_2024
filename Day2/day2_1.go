@@ -19,7 +19,8 @@ func main() {
 
 	scanner := bufio.NewScanner(data)
 	var numbers []int
-	count := 0
+	increase_count := 0
+	decrease_count := 0
 	for scanner.Scan() {
 		line := scanner.Text()
 		split_line := strings.Split(line, " ")
@@ -29,30 +30,45 @@ func main() {
 			convert_me, _ := strconv.ParseInt(split_line[i], 10, 64)
 			numbers = append(numbers, int(convert_me))
 		}
-		if is_it_safe(numbers) == true {
-			fmt.Println(numbers)
-			count++
+		if increase_validation(numbers) == true {
+			increase_count++
+		}
+
+		if decrease_validation(numbers) == true {
+			decrease_count++
 		}
 	}
-	fmt.Printf("Number of safe reports: %d", count)
+	final_count := increase_count + decrease_count
+	fmt.Printf("Number of safe reports: %d", final_count)
 }
 
 // Check if the numbers in the array pass the Day 2 Part 1 test.
 // Must increase or decrease all the way through, no change is considered a failure
 // Change can be no more than 3
 // false == unsafe | true == safe
-func is_it_safe(numbers []int) bool {
+func increase_validation(numbers []int) bool {
 	iterator := 1
-	for i := range(len(numbers) - 1) {
+
+	for i := range len(numbers) - 1 {
 		test := numbers[iterator] - numbers[i]
 		if test > 0 && test <= 3 {
 			iterator++
-		} else if test == 0 || test > 3 {
+		} else {
 			iterator = 1
 			return false
-		} else if test < 0 && test > -4 {
+		}
+	}
+	return true
+}
+
+func decrease_validation(numbers []int) bool {
+	iterator := 1
+
+	for i := range len(numbers) - 1 {
+		test := numbers[i] - numbers[iterator]
+		if test > 0 && test <= 3 {
 			iterator++
-		} else if test < -3 {
+		} else {
 			iterator = 1
 			return false
 		}
